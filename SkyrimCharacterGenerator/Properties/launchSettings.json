@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "SkyrimCharacterGenerator": {
+      "commandName": "Project",
+      "commandLineArgs": "dwb lorkhan factions"
+    }
+  }
+}
