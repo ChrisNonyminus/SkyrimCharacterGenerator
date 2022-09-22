@@ -69,6 +69,8 @@ namespace Application
             Loved
         }
 
+        public static Dictionary<Faction, Faction[]> FactionsEachFactionHates = new Dictionary<Faction, Faction[]>();
+
         public CharacterGender Gender;
         public CharacterRace Race;
 
@@ -269,6 +271,20 @@ namespace Application
 
         public static Character Generate(Character.Options options)
         {
+            FactionsEachFactionHates[Faction.Folk] = new Faction[] { Faction.Forsworn, Faction.Bandits, Faction.Warlocks, Faction.Giants };
+            FactionsEachFactionHates[Faction.Bandits] = new Faction[] { Faction.Folk, Faction.Stormcloaks, Faction.Imperials, Faction.Thalmor, Faction.Giants };
+            FactionsEachFactionHates[Faction.Forsworn] = new Faction[] { Faction.Folk, Faction.Stormcloaks, Faction.Giants };
+            FactionsEachFactionHates[Faction.Stormcloaks] = new Faction[] {Faction.Imperials, Faction.Thalmor, Faction.Bandits, Faction.Warlocks, Faction.Giants };
+            FactionsEachFactionHates[Faction.Imperials] = new Faction[] { Faction.Stormcloaks, Faction.Orcs, Faction.Bandits, Faction.Warlocks, Faction.Giants };
+            FactionsEachFactionHates[Faction.Thalmor] = new Faction[] { Faction.Stormcloaks, Faction.Orcs, Faction.Bandits, Faction.Warlocks, Faction.Giants };
+            FactionsEachFactionHates[Faction.Dawnguard] = new Faction[] { Faction.VolkiharVampires, Faction.Giants };
+            FactionsEachFactionHates[Faction.VolkiharVampires] = new Faction[] { Faction.Dawnguard, Faction.Giants };
+            FactionsEachFactionHates[Faction.Orcs] = new Faction[] { Faction.Thalmor, Faction.Imperials };
+            FactionsEachFactionHates[Faction.Falmer] = new Faction[] { Faction.Dwemer, Faction.Folk };
+            FactionsEachFactionHates[Faction.Dwemer] = new Faction[] { Faction.Falmer };
+            FactionsEachFactionHates[Faction.Warlocks] = new Faction[] { Faction.Folk, Faction.Stormcloaks, Faction.Imperials, Faction.College, Faction.Giants };
+            FactionsEachFactionHates[Faction.College] = new Faction[] { Faction.Warlocks, Faction.Giants };
+            FactionsEachFactionHates[Faction.Giants] = new Faction[] { Faction.Folk, Faction.Bandits, Faction.Forsworn, Faction.Imperials, Faction.Thalmor, Faction.Dawnguard, Faction.VolkiharVampires, Faction.Thalmor, Faction.Warlocks, Faction.College };
             Character character = new Character();
             Random random = new Random(new Random().Next());
 
@@ -332,6 +348,24 @@ namespace Application
                     if (random.Next(2) == 1 && !character.DefaultReputations.ContainsKey(faction))
                     {
                         character.DefaultReputations[faction] = (Character.Reputation)random.Next(5);
+                    }
+                }
+                var baserepuations = character.DefaultReputations.ToArray();
+                foreach (var faction in baserepuations)
+                {
+                    var matches = FactionsEachFactionHates.Where(x => x.Value.Contains(faction.Key));
+                    bool factionIsAffiliated = (int)faction.Value > 2;
+                    bool factionHatesYou = (int)faction.Value < 2;
+                    foreach (var otherfaction in matches)
+                    {
+                        if (factionIsAffiliated)
+                        {
+                            character.DefaultReputations[otherfaction.Key] = faction.Value == Reputation.Liked ? Reputation.Shunned : Reputation.Vilified;
+                        }
+                        else if (factionHatesYou && random.Next(2) == 1) // the enemy of my enemy is my friend
+                        {
+                            character.DefaultReputations[otherfaction.Key] = faction.Value == Reputation.Shunned ? Reputation.Liked : Reputation.Loved;
+                        }
                     }
                 }
             }
