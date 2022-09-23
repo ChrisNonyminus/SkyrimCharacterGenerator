@@ -214,7 +214,7 @@ namespace Application
             public AgeModifier Age;
             public enum ParentsJobModifier
             {
-                Orphans,Destitutes, // if socially invisible
+                Orphan,Destitutes, // if socially invisible
                 Miners,Farmers, // if working class
                 Merchants,Artisans, // if middle class
                 Priests,Nobles, // if upper class
@@ -604,7 +604,7 @@ namespace Application
                     Console.WriteLine($"\t\t{career}");
                 }
                 Console.WriteLine($"\tYour age is {dwb.Age}.");
-                Console.WriteLine($"\tYour parents were '{dwb.ParentsJob}'.");
+                Console.WriteLine(dwb.ParentsJob == Character.DealingWithBackstories.ParentsJobModifier.Orphan ? $"\tYou are an orphan." : $"\tYour parents were '{dwb.ParentsJob}'.");
                 Console.WriteLine($"\tYour genetics:");
                 foreach (var g in dwb.Genetics)
                 {
