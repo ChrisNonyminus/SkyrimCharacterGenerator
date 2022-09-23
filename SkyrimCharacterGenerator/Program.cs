@@ -377,7 +377,7 @@ namespace Application
                 // todo: filter faction reputations depending on other stats
                 for (Faction faction = Faction.Folk; (int)faction < 14; faction++)
                 {
-                    if (random.Next(4) == 1 && !character.DefaultReputations.ContainsKey(faction))
+                    if (random.Next(3) == 1 && !character.DefaultReputations.ContainsKey(faction))
                     {
                         character.DefaultReputations[faction] = (Character.Reputation)random.Next(5);
                     }
