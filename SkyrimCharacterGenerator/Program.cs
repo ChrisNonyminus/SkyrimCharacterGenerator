@@ -439,7 +439,7 @@ namespace Application
                 character.DWBStats.Genetics = new Dictionary<DealingWithBackstories.GeneticsType, DealingWithBackstories.QualityType>();
                 for (int i = 0; i < 6; i++)
                 {
-                    DealingWithBackstories.GeneticsType mod = (DealingWithBackstories.GeneticsType)random.Next(12);
+                    DealingWithBackstories.GeneticsType mod = (DealingWithBackstories.GeneticsType)random.Next(5);
                     while (character.DWBStats.Genetics.ContainsKey(mod))
                     {
                         mod = (DealingWithBackstories.GeneticsType)random.Next(12);
