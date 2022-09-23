@@ -442,7 +442,7 @@ namespace Application
                     DealingWithBackstories.GeneticsType mod = (DealingWithBackstories.GeneticsType)random.Next(5);
                     while (character.DWBStats.Genetics.ContainsKey(mod))
                     {
-                        mod = (DealingWithBackstories.GeneticsType)random.Next(12);
+                        mod = (DealingWithBackstories.GeneticsType)random.Next(6);
                     }
                     DealingWithBackstories.QualityType qual = (DealingWithBackstories.QualityType)random.Next(3);
                     character.DWBStats.Genetics.Add(mod, qual);
