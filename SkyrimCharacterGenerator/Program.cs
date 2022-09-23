@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Application
 {
@@ -260,13 +262,33 @@ namespace Application
             public DesireType[] Desires; // must pick 4
         }
         public DealingWithBackstories DWBStats;
-        
+
+        [Serializable]
+        public struct Template
+        {
+            [JsonInclude]
+            public CharacterGender Gender;
+            [JsonInclude]
+            public CharacterRace Race;
+            [JsonInclude]
+            public Dictionary<Faction, Reputation> DefaultReputations;
+        }
+
+        [Serializable]
         public struct Options // what mods to use
         {
+            [JsonInclude]
             public bool UsingCCO; // Character Creation Overhaul
+            [JsonInclude]
             public bool UsingLorkhan; // Realm of Lorkhan
+            [JsonInclude]
             public bool UsingFactionReps; // Faction reputation mods (like Faction Warfare)
+            [JsonInclude]
             public bool UsingDWB; // Dealing with Backstories
+            [JsonInclude]
+            public bool UseTemplate;
+            [JsonInclude]
+            public Template Template;
         }
 
         public static Character Generate(Character.Options options)
@@ -289,9 +311,18 @@ namespace Application
             Random random = new Random(new Random().Next());
 
             // randomize the gender
-            character.Gender = (CharacterGender)random.Next(2);
-            character.Race = (CharacterRace)random.Next(10);
-            character.DefaultReputations = new Dictionary<Faction, Reputation>();
+            if (options.UseTemplate)
+            {
+                character.Gender = options.Template.Gender;
+                character.Race = options.Template.Race;
+                character.DefaultReputations = options.Template.DefaultReputations;
+            }
+            else
+            {
+                character.Gender = (CharacterGender)random.Next(2);
+                character.Race = (CharacterRace)random.Next(10);
+                character.DefaultReputations = new Dictionary<Faction, Reputation>();
+            }
 
             if (options.UsingCCO)
             {
@@ -339,6 +370,7 @@ namespace Application
                 character.LorkhanStats.Classes = characterClasses.ToArray();
                 character.LorkhanStats.Curses = characterCurses.ToArray();
             }
+            Dictionary<Faction, bool> isReputationLocked = new Dictionary<Faction, bool>();
             // todo: DwB
             if (options.UsingFactionReps)
             {
@@ -358,13 +390,15 @@ namespace Application
                     bool factionHatesYou = (int)faction.Value < 2;
                     foreach (var otherfaction in matches)
                     {
-                        if (factionIsAffiliated)
+                        if (factionIsAffiliated && !isReputationLocked.ContainsKey(otherfaction.Key) && (options.UseTemplate && !options.Template.DefaultReputations.ContainsKey(otherfaction.Key)))
                         {
                             character.DefaultReputations[otherfaction.Key] = faction.Value == Reputation.Liked ? Reputation.Shunned : Reputation.Vilified;
+                            isReputationLocked[otherfaction.Key] = true;
                         }
-                        else if (factionHatesYou && random.Next(2) == 1) // the enemy of my enemy is my friend
+                        else if (factionHatesYou && random.Next(2) == 1 && !isReputationLocked.ContainsKey(otherfaction.Key) && (options.UseTemplate && !options.Template.DefaultReputations.ContainsKey(otherfaction.Key))) // the enemy of my enemy is my friend
                         {
                             character.DefaultReputations[otherfaction.Key] = faction.Value == Reputation.Shunned ? Reputation.Liked : Reputation.Loved;
+                            isReputationLocked[otherfaction.Key] = true;
                         }
                     }
                 }
@@ -382,41 +416,26 @@ namespace Application
         // more probably
         static void Main(string[] args)
         {
-            Character.Options options;
-            options.UsingLorkhan = false;
-            options.UsingCCO = false;
-            options.UsingDWB = false;
-            options.UsingFactionReps = false;
-            if (args.Contains("cco"))
+            if (!File.Exists(args[0]))
             {
-                options.UsingCCO = true;
+                Console.WriteLine($"ERROR: {args[0]} does not exist in any known directory");
+                return;
             }
-            if (args.Contains("dwb"))
-            {
-                options.UsingDWB = true;
-            }
-            if (args.Contains("lorkhan"))
-            {
-                options.UsingLorkhan = true;
-            }
-            if (args.Contains("factions"))
-            {
-                options.UsingFactionReps = true;
-            }
+            Character.Options options = JsonSerializer.Deserialize<Character.Options>(File.ReadAllText(args[0]));
             Character character = Character.Generate(options);
             Console.WriteLine($"You are a {character.Gender} {character.Race}.");
-            if (args.Contains("cco"))
+            if (options.UsingCCO)
             {
                 Console.WriteLine("\nCCO Stats:");
                 Character.CCO cco = character.CCOStats;
                 Console.WriteLine($"\tYour sign is {cco.Sign}.");
                 Console.WriteLine($"\tYour primary class is {cco.PresetClass}.");
             }
-            if (args.Contains("dwb"))
+            if (options.UsingDWB)
             {
                 // todo
             }
-            if (args.Contains("lorkhan"))
+            if (options.UsingLorkhan)
             {
                 Console.WriteLine("\nStats for Realm of Lorkhan:");
                 Character.Lorkhan lorkhan = character.LorkhanStats;
@@ -433,7 +452,7 @@ namespace Application
                 }
                 Console.WriteLine($"\tYou will start the game in {lorkhan.StartingLocation}.");
             }
-            if (args.Contains("factions"))
+            if (options.UsingFactionReps)
             {
                 Console.WriteLine($"\nHow factions view you:");
                 foreach (var faction in character.DefaultReputations)

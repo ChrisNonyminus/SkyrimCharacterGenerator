@@ -2,7 +2,8 @@
   "profiles": {
     "SkyrimCharacterGenerator": {
       "commandName": "Project",
-      "commandLineArgs": "dwb lorkhan factions"
+      "commandLineArgs": "options.json",
+      "workingDirectory": "M:\\sourcecode\\SkyrimCharacterGenerator\\SkyrimCharacterGenerator\\bin\\Debug\\net6.0"
     }
   }
 }
