@@ -455,7 +455,7 @@ namespace Application
                 {
                     character.DWBStats.Vice = DealingWithBackstories.ViceType.NoneYet;
                 }
-                character.DWBStats.Talent = (DealingWithBackstories.TalentType)random.Next(9);
+                character.DWBStats.Talent = character.DWBStats.Adolescence[random.Next(character.DWBStats.Adolescence.Count)];
                 character.DWBStats.Fates = new List<DealingWithBackstories.FateType>();
                 for (int i = 0; i < 4; i++)
                 {
