@@ -3,12 +3,16 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkyrimCharacterGenerator.ConsoleApp", "SkyrimCharacterGenerator\SkyrimCharacterGenerator.ConsoleApp.csproj", "{CA1530BB-9020-4263-8830-74EE9F086E80}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SkyrimCharacterGenerator.ConsoleApp", "SkyrimCharacterGenerator\SkyrimCharacterGenerator.ConsoleApp.csproj", "{CA1530BB-9020-4263-8830-74EE9F086E80}"
 	ProjectSection(ProjectDependencies) = postProject
 		{FF32E0A2-4273-4690-868E-0C5D52045422} = {FF32E0A2-4273-4690-868E-0C5D52045422}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkyrimCharacterGenerator.Common", "SkyrimCharacterGenerator.Common\SkyrimCharacterGenerator.Common.csproj", "{FF32E0A2-4273-4690-868E-0C5D52045422}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SkyrimCharacterGenerator.Common", "SkyrimCharacterGenerator.Common\SkyrimCharacterGenerator.Common.csproj", "{FF32E0A2-4273-4690-868E-0C5D52045422}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkyrimCharacterGenerator.UI.Common", "SkyrimCharacterGenerator.UI.Common\SkyrimCharacterGenerator.UI.Common.csproj", "{ABE49DD7-FFA2-4622-A967-FDFB4C4B0782}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkyrimCharacterGenerator.UI.App", "SkyrimCharacterGenerator.UI.App\SkyrimCharacterGenerator.UI.App.csproj", "{E32B5D17-8471-4601-A420-D1325B9B36C3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,6 +28,14 @@ Global
 		{FF32E0A2-4273-4690-868E-0C5D52045422}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FF32E0A2-4273-4690-868E-0C5D52045422}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FF32E0A2-4273-4690-868E-0C5D52045422}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABE49DD7-FFA2-4622-A967-FDFB4C4B0782}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABE49DD7-FFA2-4622-A967-FDFB4C4B0782}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABE49DD7-FFA2-4622-A967-FDFB4C4B0782}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABE49DD7-FFA2-4622-A967-FDFB4C4B0782}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E32B5D17-8471-4601-A420-D1325B9B36C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E32B5D17-8471-4601-A420-D1325B9B36C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E32B5D17-8471-4601-A420-D1325B9B36C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E32B5D17-8471-4601-A420-D1325B9B36C3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
