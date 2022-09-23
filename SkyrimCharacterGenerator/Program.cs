@@ -149,7 +149,7 @@ namespace Application
                 BeingBullied,
                 Bullying
             }
-            public ChildhoodModifiers[] Childhood; // pick 3
+            public List<ChildhoodModifiers> Childhood; // pick 3
             public enum TalentType
             {
                 GirlsOrBoys,
@@ -162,7 +162,7 @@ namespace Application
                 Reading,
                 Fashion
             }
-            public TalentType[] Adolescence; // pick 3
+            public List<TalentType> Adolescence; // pick 3
             public enum CareerModifiers
             {
                 Alchemist,
@@ -203,7 +203,7 @@ namespace Application
                 Witch,
                 Woodsman
             }
-            public CareerModifiers[] PastCareers; // pick 0-3
+            public List<CareerModifiers> PastCareers; // pick 0-3
             public enum AgeModifier
             {
                 ComingOfAge, // start at 1
@@ -214,7 +214,7 @@ namespace Application
             public AgeModifier Age;
             public enum ParentsJobModifier
             {
-                Orphan,Destitute, // if socially invisible
+                Orphans,Destitutes, // if socially invisible
                 Miners,Farmers, // if working class
                 Merchants,Artisans, // if middle class
                 Priests,Nobles, // if upper class
@@ -222,19 +222,24 @@ namespace Application
             public ParentsJobModifier ParentsJob; // must pick 1
             public enum GeneticsType
             {
-                BadAppearance, GoodAppearance,
-                BadHeight, GoodHeight,
-                BadMagicalPotential, GoodMagicalPotential,
-                BadEndurance, GoodEndurance,
-                BadFortitude, GoodFortitude,
-                BadIntelligence, GoodIntelligence,
+                Appearance,
+                Height,
+                MagicalPotential,
+                Endurance,
+                Fortitude,
+                Intelligence,
             }
-            public GeneticsType[] Genetics; // must pick 6
+            public enum QualityType
+            {
+                Good, Average, Bad
+            }
+
+            public Dictionary<GeneticsType, QualityType> Genetics; // must pick 6
             public enum ViceType
             {
-                Gambling,SubstanceAbuse,Crime,Sadism,Unprofessional,Adultery
+                Gambling,SubstanceAbuse,Crime,Sadism,Unprofessional,Adultery, NoneYet
             }
-            public ViceType Vice; // optional if coming of age
+            public ViceType Vice; // N/A if coming of age
             public TalentType Talent; // must pick 1
             public enum FateType
             {
@@ -248,18 +253,18 @@ namespace Application
                 Lycanthropy,
                 Undeath
             }
-            public FateType[] Fates; // 0-4 depending on age
+            public List<FateType> Fates; // 0-4 depending on age
             public enum AspirationType
             {
                 Family,Career,Piety,Health,Leisure,Wealth
             }
-            public AspirationType[] Focuses; // 0-2
-            public AspirationType[] Neglects; // 0-2
+            public List<AspirationType> Focuses; // 0-2
+            public List<AspirationType> Neglects; // 0-2
             public enum DesireType
             {
                 Wealth,Love,MagicPower,Fame,Immortality,Revenge,RecoverThePast,Adventure,ForbiddenKnowledge,VictoryInBattle
             }
-            public DesireType[] Desires; // must pick 4
+            public List<DesireType> Desires; // must pick 4
         }
         public DealingWithBackstories DWBStats;
 
@@ -371,7 +376,149 @@ namespace Application
                 character.LorkhanStats.Curses = characterCurses.ToArray();
             }
             Dictionary<Faction, bool> isReputationLocked = new Dictionary<Faction, bool>();
-            // todo: DwB
+            if (options.UsingDWB)
+            {
+                character.DWBStats.Sign = (StandingStone)random.Next(13);
+                character.DWBStats.FinancialStatus = (DealingWithBackstories.ParentsFinancialStatus)random.Next(4);
+                character.DWBStats.Siblings = (DealingWithBackstories.SiblingsModifiers)random.Next(3);
+                character.DWBStats.Childhood = new List<DealingWithBackstories.ChildhoodModifiers>();
+                for (int i = 0; i < 3; i++)
+                {
+                    DealingWithBackstories.ChildhoodModifiers mod = (DealingWithBackstories.ChildhoodModifiers)random.Next(12);
+                    while (character.DWBStats.Childhood.Contains(mod))
+                    {
+                        mod = (DealingWithBackstories.ChildhoodModifiers)random.Next(12);
+                    }
+                    character.DWBStats.Childhood.Add(mod);
+                }
+                character.DWBStats.Adolescence = new List<DealingWithBackstories.TalentType>();
+                for (int i = 0; i < 3; i++)
+                {
+                    DealingWithBackstories.TalentType talent = (DealingWithBackstories.TalentType)random.Next(9);
+                    while (character.DWBStats.Adolescence.Contains(talent))
+                    {
+                        talent = (DealingWithBackstories.TalentType)random.Next(9);
+                    }
+                    character.DWBStats.Adolescence.Add(talent);
+                }
+                character.DWBStats.PastCareers = new List<DealingWithBackstories.CareerModifiers>();
+                character.DWBStats.Age = (DealingWithBackstories.AgeModifier)random.Next(4);
+                for (int i = 0; i < 3; i++)
+                {
+                    if (character.DWBStats.Age == DealingWithBackstories.AgeModifier.ComingOfAge)
+                    {
+                        break;
+                    }
+                    else if (character.DWBStats.Age == DealingWithBackstories.AgeModifier.Adulthood && i == 1)
+                    {
+                        break;
+                    }
+                    else if (character.DWBStats.Age == DealingWithBackstories.AgeModifier.MiddleAge && i == 2)
+                    {
+                        break;
+                    }
+                    DealingWithBackstories.CareerModifiers mod = (DealingWithBackstories.CareerModifiers)random.Next(37); // the same career can be added more than once
+                    character.DWBStats.PastCareers.Add(mod);
+                }
+                if (character.DWBStats.FinancialStatus == DealingWithBackstories.ParentsFinancialStatus.SociallyInvisible)
+                {
+                    character.DWBStats.ParentsJob = (DealingWithBackstories.ParentsJobModifier)random.Next(0, 2);
+                }
+                else if (character.DWBStats.FinancialStatus == DealingWithBackstories.ParentsFinancialStatus.WorkingClass)
+                {
+                    character.DWBStats.ParentsJob = (DealingWithBackstories.ParentsJobModifier)random.Next(2, 4);
+                }
+                else if (character.DWBStats.FinancialStatus == DealingWithBackstories.ParentsFinancialStatus.MiddleClass)
+                {
+                    character.DWBStats.ParentsJob = (DealingWithBackstories.ParentsJobModifier)random.Next(4, 6);
+                }
+                else if (character.DWBStats.FinancialStatus == DealingWithBackstories.ParentsFinancialStatus.UpperClass)
+                {
+                    character.DWBStats.ParentsJob = (DealingWithBackstories.ParentsJobModifier)random.Next(6, 8);
+                }
+                character.DWBStats.Genetics = new Dictionary<DealingWithBackstories.GeneticsType, DealingWithBackstories.QualityType>();
+                for (int i = 0; i < 6; i++)
+                {
+                    DealingWithBackstories.GeneticsType mod = (DealingWithBackstories.GeneticsType)random.Next(12);
+                    while (character.DWBStats.Genetics.ContainsKey(mod))
+                    {
+                        mod = (DealingWithBackstories.GeneticsType)random.Next(12);
+                    }
+                    DealingWithBackstories.QualityType qual = (DealingWithBackstories.QualityType)random.Next(3);
+                    character.DWBStats.Genetics.Add(mod, qual);
+                }
+                if ((int)character.DWBStats.Age > 0)
+                {
+                    character.DWBStats.Vice = (DealingWithBackstories.ViceType)random.Next(6);
+                }
+                else
+                {
+                    character.DWBStats.Vice = DealingWithBackstories.ViceType.NoneYet;
+                }
+                character.DWBStats.Talent = (DealingWithBackstories.TalentType)random.Next(9);
+                character.DWBStats.Fates = new List<DealingWithBackstories.FateType>();
+                for (int i = 0; i < 4; i++)
+                {
+                    if (random.Next(4) == 1)
+                    {
+                        break;
+                    }
+                    if (character.DWBStats.Age == DealingWithBackstories.AgeModifier.ComingOfAge && i == 1)
+                    {
+                        break;
+                    }
+                    else if (character.DWBStats.Age == DealingWithBackstories.AgeModifier.Adulthood && i == 2)
+                    {
+                        break;
+                    }
+                    else if (character.DWBStats.Age == DealingWithBackstories.AgeModifier.MiddleAge && i == 3)
+                    {
+                        break;
+                    }
+                    DealingWithBackstories.FateType fate = (DealingWithBackstories.FateType)random.Next(9);
+                    while (character.DWBStats.Fates.Contains(fate))
+                    {
+                        fate = (DealingWithBackstories.FateType)random.Next(9);
+                    }
+                    character.DWBStats.Fates.Add(fate);
+                }
+                character.DWBStats.Focuses = new List<DealingWithBackstories.AspirationType>();
+                character.DWBStats.Neglects = new List<DealingWithBackstories.AspirationType>();
+                if ((int)character.DWBStats.Age > 1)
+                {
+                    for (int i = 0; i < 2; i++)
+                    {
+                        DealingWithBackstories.AspirationType focus = (DealingWithBackstories.AspirationType)random.Next(6);
+                        while (character.DWBStats.Focuses.Contains(focus))
+                        {
+                            focus = (DealingWithBackstories.AspirationType)random.Next(6);
+                        }
+                        character.DWBStats.Focuses.Add(focus);
+                    }
+                }
+                if (character.DWBStats.Age == DealingWithBackstories.AgeModifier.OldAge)
+                {
+                    for (int i = 0; i < 2; i++)
+                    {
+                        DealingWithBackstories.AspirationType neglect = (DealingWithBackstories.AspirationType)random.Next(6);
+                        while (character.DWBStats.Neglects.Contains(neglect) || character.DWBStats.Focuses.Contains(neglect))
+                        {
+                            neglect = (DealingWithBackstories.AspirationType)random.Next(6);
+                        }
+                        character.DWBStats.Neglects.Add(neglect);
+                    }
+                }
+                character.DWBStats.Desires = new List<DealingWithBackstories.DesireType>();
+                for (int i = 0; i < 4; i++)
+                {
+                    DealingWithBackstories.DesireType desired = (DealingWithBackstories.DesireType)random.Next(10);
+                    while (character.DWBStats.Desires.Contains(desired))
+                    {
+                        desired = (DealingWithBackstories.DesireType)random.Next(10);
+                    }
+                    character.DWBStats.Desires.Add(desired);
+                }
+            }
             if (options.UsingFactionReps)
             {
                 // todo: filter faction reputations depending on other stats
@@ -421,6 +568,9 @@ namespace Application
                 Console.WriteLine($"ERROR: {args[0]} does not exist in any known directory");
                 return;
             }
+            Console.WriteLine($"NOTE: " +
+                $"Sometimes the generations in the same category for different 'stat areas' will conflict. (Example: standing stones/signs)\n" +
+                $"If that happens, just choose which one you think fits your character best.\n");
             Character.Options options = JsonSerializer.Deserialize<Character.Options>(File.ReadAllText(args[0]));
             Character character = Character.Generate(options);
             Console.WriteLine($"You are a {character.Gender} {character.Race}.");
@@ -433,13 +583,65 @@ namespace Application
             }
             if (options.UsingDWB)
             {
-                // todo
+                Console.WriteLine($"\nStats for Dealing with Backstories:");
+                Character.DealingWithBackstories dwb = character.DWBStats;
+                Console.WriteLine($"\tYour sign is {dwb.Sign}.");
+                Console.WriteLine($"\tYour parents' financial status was '{dwb.FinancialStatus}'.");
+                Console.WriteLine($"\tYour status as a sibling was '{dwb.Siblings}'.");
+                Console.WriteLine($"\tChildhood hobbies:");
+                foreach (var hobby in dwb.Childhood)
+                {
+                    Console.WriteLine($"\t\t{hobby}");
+                }
+                Console.WriteLine($"\tYour interests during adolescence:");
+                foreach (var hobby in dwb.Adolescence)
+                {
+                    Console.WriteLine($"\t\t{hobby}");
+                }
+                Console.WriteLine($"\tYour past careers:");
+                foreach (var career in dwb.PastCareers)
+                {
+                    Console.WriteLine($"\t\t{career}");
+                }
+                Console.WriteLine($"\tYour age is {dwb.Age}.");
+                Console.WriteLine($"\tYour parents were '{dwb.ParentsJob}'.");
+                Console.WriteLine($"\tYour genetics:");
+                foreach (var g in dwb.Genetics)
+                {
+                    Console.WriteLine($"\t\t{g.Key}: {g.Value}");
+                }
+                Console.WriteLine($"\tYour vice is {dwb.Vice}.");
+                Console.WriteLine($"\tYour primary talent is {dwb.Talent}.");
+
+                Console.WriteLine($"\tYour fate(s), if any:");
+                foreach (var fate in dwb.Fates)
+                {
+                    Console.WriteLine($"\t\t{fate}");
+                }
+
+                Console.WriteLine($"\tYour focus(es), if any:");
+                foreach (var a in dwb.Focuses)
+                {
+                    Console.WriteLine($"\t\t{a}");
+                }
+
+                Console.WriteLine($"\tYour neglect(s), if any:");
+                foreach (var a in dwb.Neglects)
+                {
+                    Console.WriteLine($"\t\t{a}");
+                }
+
+                Console.WriteLine($"\tYour desires:");
+                foreach (var a in dwb.Desires)
+                {
+                    Console.WriteLine($"\t\t{a}");
+                }
             }
             if (options.UsingLorkhan)
             {
                 Console.WriteLine("\nStats for Realm of Lorkhan:");
                 Character.Lorkhan lorkhan = character.LorkhanStats;
-                Console.WriteLine($"\tYour standing stone is {lorkhan.Sign}.");
+                Console.WriteLine($"\tYour standing stone (sign) is {lorkhan.Sign}.");
                 Console.WriteLine($"\tClasses (if any):");
                 foreach (var taken in lorkhan.Classes)
                 {
