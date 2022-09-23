@@ -197,7 +197,7 @@ namespace Application
                 Priest,
                 Shaman,
                 Soldier,
-                TravellingPerforming,
+                TravellingPerformer,
                 TreasureHunter,
                 Warlock,
                 Witch,
@@ -613,7 +613,7 @@ namespace Application
                 Console.WriteLine($"\tYour vice is {dwb.Vice}.");
                 Console.WriteLine($"\tYour primary talent is {dwb.Talent}.");
 
-                Console.WriteLine($"\tYour fate(s), if any:");
+                Console.WriteLine($"\tYour past fate(s), if any:");
                 foreach (var fate in dwb.Fates)
                 {
                     Console.WriteLine($"\t\t{fate}");
