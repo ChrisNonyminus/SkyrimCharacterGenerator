@@ -377,7 +377,7 @@ namespace Application
                 // todo: filter faction reputations depending on other stats
                 for (Faction faction = Faction.Folk; (int)faction < 14; faction++)
                 {
-                    if (random.Next(2) == 1 && !character.DefaultReputations.ContainsKey(faction))
+                    if (random.Next(4) == 1 && !character.DefaultReputations.ContainsKey(faction))
                     {
                         character.DefaultReputations[faction] = (Character.Reputation)random.Next(5);
                     }
@@ -395,7 +395,7 @@ namespace Application
                             character.DefaultReputations[otherfaction.Key] = faction.Value == Reputation.Liked ? Reputation.Shunned : Reputation.Vilified;
                             isReputationLocked[otherfaction.Key] = true;
                         }
-                        else if (factionHatesYou && random.Next(2) == 1 && !isReputationLocked.ContainsKey(otherfaction.Key) && (options.UseTemplate && !options.Template.DefaultReputations.ContainsKey(otherfaction.Key))) // the enemy of my enemy is my friend
+                        else if (factionHatesYou && random.Next(4) == 1 && !isReputationLocked.ContainsKey(otherfaction.Key) && (options.UseTemplate && !options.Template.DefaultReputations.ContainsKey(otherfaction.Key))) // the enemy of my enemy is my friend
                         {
                             character.DefaultReputations[otherfaction.Key] = faction.Value == Reputation.Shunned ? Reputation.Liked : Reputation.Loved;
                             isReputationLocked[otherfaction.Key] = true;
