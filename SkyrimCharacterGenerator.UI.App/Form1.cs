@@ -90,9 +90,9 @@ namespace SkyrimCharacterGenerator.UI.App
 
             if (cbOptions.GetItemChecked(2) && !cbLockFactions.Checked)
             {
+                dgvFactionReputations.Rows.Clear();
                 clmnFaction.DataSource = Enum.GetValues(typeof(Common.Character.Faction));
                 clmnReputation.DataSource = Enum.GetValues(typeof(Common.Character.Reputation));
-                dgvFactionReputations.Rows.Clear();
                 foreach (var reputation in character.DefaultReputations)
                 {
                     int idx = dgvFactionReputations.Rows.Add();
